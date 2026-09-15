@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+.venv/
+venv/
+~$*.xlsx
+.streamlit/secrets.toml
+.claude/
+/NEISS_2010-2025_surfing.xlsx
