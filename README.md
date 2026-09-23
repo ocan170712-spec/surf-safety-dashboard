@@ -1,67 +1,67 @@
-# サーフィン事故と海の安全 ダッシュボード
+# Surfing Accidents & Ocean Safety Dashboard
 
-米国のサーフィン事故データを集計・分析し、重症度に影響する要因を探るデータ分析プロジェクトです。Streamlitで作った操作可能なダッシュボードで、傾向の可視化・統計検定・機械学習による重症度予測を確認できます。
+A data analysis project that aggregates and analyzes US surfing accident data to explore what drives injury severity. Built with Streamlit into an interactive dashboard covering trend visualization, statistical testing, and machine-learning severity prediction.
 
-## 公開サイト
+## Live site
 
-[https://surf-safety-dashboard.onrender.com](https://surf-safety-dashboard.onrender.com)(Render, 無料プラン。一定時間アクセスがないとスリープするため、初回表示に20〜30秒ほどかかることがあります)
+[https://surf-safety-dashboard.onrender.com](https://surf-safety-dashboard.onrender.com) (hosted on Render's free tier — the instance sleeps after inactivity, so the first load can take 20-30 seconds)
 
-## データソース
+## Data sources
 
-| データセット | 内容 | 範囲 | 出典 |
+| Dataset | Content | Coverage | Source |
 |---|---|---|---|
-| NEISS | 米国の救急外来(ER)におけるサーフィン受傷記録 | 2010〜2025年, 1,850件 | [CPSC National Electronic Injury Surveillance System](https://www.cpsc.gov/Research--Statistics/NEISS-Injury-Data) |
-| Global Shark Attack File | シャーク被害の記録(米国分に絞り込み、うちサーフィン関連695件) | 1900年代〜2016年ごろ | [sharkattackfile.net](http://sharkattackfile.net/) のミラー([GitHub](https://github.com/mariobru/global-shark-attacks)) |
+| NEISS | US emergency-room (ER) records for surfing-related injuries | 2010-2025, 1,850 cases | [CPSC National Electronic Injury Surveillance System](https://www.cpsc.gov/Research--Statistics/NEISS-Injury-Data) |
+| Global Shark Attack File | Shark attack records (filtered to the US, 695 of which are surf-related) | ~1900s-2016 | Mirror of [sharkattackfile.net](http://sharkattackfile.net/) ([GitHub](https://github.com/mariobru/global-shark-attacks)) |
 
-**留意点(データの限界)**
-- 両データとも米国のみが対象で、世界全体はカバーしていません。
-- Global Shark Attack Fileは2016年ごろまでのスナップショットで、近年のデータは含まれません。
-- シャーク被害の位置情報は州名のみで緯度経度がないため、マップ上の点は各州の中心付近にランダムに散らした近似表示です。正確な発生地点ではありません。
-- NEISSは全数調査ではなく、米国内の一部病院からの重み付きサンプル調査です(`Weight`列に国全体推計用の重みが入っています)。
+**Limitations of the data**
+- Both datasets cover the US only, not the whole world.
+- The Global Shark Attack File is a snapshot through roughly 2016 and doesn't include recent years.
+- Shark attack locations are recorded only as state names, with no coordinates, so map points are scattered randomly near each state's centroid for visualization. They do not represent exact incident locations.
+- NEISS is not a full census — it's a weighted sample from a subset of US hospitals (the `Weight` column carries the weight used for national estimates).
 
-## 主な発見
+## Key findings
 
-NEISSデータ(1,850件)を分析した結果、以下の傾向が見られました(詳細分析タブのロジスティック回帰・オッズ比による)。
+Analyzing the NEISS data (1,850 cases) surfaced the following patterns (via the logistic regression / odds ratios on the Detailed Analysis tab).
 
-- **年齢の影響が最も一貫して強い**: 1歳上がるごとに重症化オッズが約3.5%上昇(オッズ比1.04, p<0.001)。特に60歳以上は重症化率が11〜27%と若年層(多くが5%未満)の数倍に達します。
-- **年齢と季節の組み合わせが顕著**: 60歳以上に限ると、夏の重症化率は27%、春は20%と、秋・冬(約11%)の2倍以上。若い世代には見られないこの季節差は、高齢サーファーが載る波のコンディションや体力的な回復力の違いを示唆している可能性があります。
-- **受傷部位が重症度を大きく左右**: 体幹(Trunk)の負傷は腕・手に比べて重症化オッズが約6.4倍(p<0.001)、頭部・顔・首は約3.4倍(p<0.01)。ボードや水面への衝突が体幹・頭部に及ぶと入院に至りやすいことが読み取れます。
-- **性別による差**: 男性は女性よりも重症化オッズが約2.0倍(p=0.02)。母数(男性1,395件 vs 女性455件)の差はありますが、統計的に有意な関連です。
-- **季節単体では有意差なし**: 季節と重症度のカイ二乗検定はp=0.579で、季節だけを見ると重症化との明確な関連は確認できませんでした(上記の「年齢×季節」の交互作用の方が重要と考えられます)。
-- **重症度予測モデルの限界**: ランダムフォレストによる3クラス分類は全体精度76%ですが、中等症(21件)は事実上判別不能、重症の適合率も0.18と低め。年齢・部位・季節だけでは重症化を正確に言い当てるのは難しく、実際の受傷機転や既往歴など、NEISSにない情報が重要である可能性を示しています。
+- **Age is the strongest, most consistent driver:** each additional year of age raises the odds of a severe outcome by about 3.5% (odds ratio 1.04, p<0.001). Severity rates for those 60+ reach 11-27%, several times higher than younger age groups (mostly under 5%).
+- **Age and season interact noticeably:** among surfers 60+, the summer severity rate is 27% and spring is 20% — more than double fall/winter (~11%). This seasonal gap doesn't show up in younger groups, hinting at differences in wave conditions older surfers ride, or in physical resilience.
+- **Body part injured strongly affects severity:** trunk injuries carry roughly 6.4x the odds of a severe outcome compared to arm/hand injuries (p<0.001); head/face/neck injuries carry roughly 3.4x (p<0.01). Impacts to the trunk or head are more likely to lead to hospitalization.
+- **Sex differences:** men have roughly 2.0x the odds of a severe outcome compared to women (p=0.02). The sample sizes differ (1,395 men vs. 455 women), but the association is still statistically significant.
+- **Season alone isn't significant:** a chi-square test of season against severity gives p=0.579 — no clear standalone relationship (the age x season interaction above appears to matter more).
+- **Limits of the severity prediction model:** the random forest's 3-class classification reaches 76% overall accuracy, but the moderate class (21 cases) is effectively unclassifiable, and precision for the severe class is a low 0.18. Age, body part, and season alone aren't enough to reliably predict severity — mechanism of injury and medical history, which aren't in NEISS, are likely important missing pieces.
 
-## 手法
+## Methodology
 
-1. **クリーニング**: 表記ゆれ(コード値と文字列が混在した列、自由記述の年齢、2桁年の日付など)を統一し、季節・年齢層・重症度などの特徴量を作成(`src/clean_neiss.py`, `src/clean_shark_attacks.py`)。
-2. **記述統計・検定**: 部位・年齢層・季節別の重症度分布を集計し、カイ二乗検定で季節と重症度の関連を検証。年齢×季節のクロス集計で重症化率のヒートマップを作成。
-3. **説明モデル(ロジスティック回帰)**: 診断結果を使わず、事故発生時点でわかる要因(年齢・性別・季節・受傷部位)だけで重症化オッズを説明するモデル(`src/stats.py`)。オッズ比と95%信頼区間をフォレストプロットで可視化。
-4. **予測モデル(ランダムフォレスト)**: 年齢・性別・季節・受傷部位に加えて診断分類も使い、重症度(軽症/中等症/重症)を予測(`src/model.py`)。中等症はサンプル数が少なく(21件)、精度は限定的です。
+1. **Cleaning:** standardizes inconsistent formatting (columns mixing codes and text, free-text ages, two-digit years) and builds features like season, age group, and severity (`src/clean_neiss.py`, `src/clean_shark_attacks.py`).
+2. **Descriptive statistics & testing:** aggregates severity distributions by body part, age group, and season; runs a chi-square test for season vs. severity; builds a severity-rate heatmap from an age x season cross-tab.
+3. **Explanatory model (logistic regression):** explains the odds of a severe outcome using only circumstantial factors known at the time of the accident (age, sex, season, body part) — deliberately excluding diagnosis (`src/stats.py`). Visualizes odds ratios and 95% confidence intervals as a forest plot.
+4. **Prediction model (random forest):** predicts severity (mild/moderate/severe) using age, sex, season, and body part plus diagnosis category (`src/model.py`). The moderate class has few samples (21), so accuracy there is limited.
 
-説明モデルと予測モデルで使う特徴量をあえて分けているのは、診断分類(骨折・裂傷など)を含めると「骨折だから重症」という自明な結果になりがちなためです。要因分析(なぜ重症化するか)は診断結果を含めない設計にしています。
+The explanatory and prediction models deliberately use different feature sets: including diagnosis category (fracture, laceration, etc.) in the explanatory model would produce a near-tautological result ("it's severe because it's a fracture"). The factor-analysis model is designed to explain severity without relying on the diagnosis itself.
 
-## ダッシュボードの構成
+## Dashboard structure
 
-- **概要**: 全体件数・重症割合などのKPI、年別推移、重症度と季節の内訳。サイドバーの年スライダーで対象期間を絞り込み可能。
-- **詳細分析**: 部位・年齢層別の重症度、季節×重症度のカイ二乗検定、年齢×季節の重症化率ヒートマップ、重症化オッズ比のフォレストプロット、サメ被害の州別マップ(サイドバーの州フィルターで絞り込み、ホバーで個別事案を表示)。
-- **予測モデル**: 年齢・性別・季節・部位・診断分類を入力すると重症度の予測確率を表示。モデル評価指標と特徴量重要度も確認可能。
+- **Overview:** KPIs like total case count and severe-case rate, the yearly trend, and a breakdown by severity and season. The sidebar's year slider filters the time range.
+- **Detailed Analysis:** severity by body part and age group, a chi-square test of season vs. severity, an age x season severity-rate heatmap, an odds-ratio forest plot, and a state-level shark attack map (filterable via the sidebar's state selector, with hover for individual incidents).
+- **Prediction Model:** enter age, sex, season, body part, and diagnosis category to see predicted severity probabilities, along with model evaluation metrics and feature importances.
 
-## ディレクトリ構成
+## Directory structure
 
 ```
 data/
-  raw/            元データ(xlsx, csv)
-  processed/      クリーニング後のCSVと学習済みモデル
+  raw/            source data (xlsx, csv)
+  processed/      cleaned CSVs and the trained model
 src/
-  clean_neiss.py          NEISSデータのクリーニング
-  clean_shark_attacks.py  シャーク被害データのクリーニング
-  stats.py                重症化要因のロジスティック回帰(オッズ比)
-  model.py                重症度予測モデル(ランダムフォレスト)の学習
+  clean_neiss.py          NEISS data cleaning
+  clean_shark_attacks.py  shark attack data cleaning
+  stats.py                logistic regression for severity factors (odds ratios)
+  model.py                severity prediction model (random forest) training
 app/
-  app.py          Streamlitダッシュボード本体
-  geo.py          州の中心座標(マップ表示用)
+  app.py          the Streamlit dashboard
+  geo.py          state centroid coordinates (for the map)
 ```
 
-## セットアップと実行方法
+## Setup and usage
 
 ```bash
 pip install -r requirements.txt
@@ -73,7 +73,7 @@ python src/model.py
 streamlit run app/app.py
 ```
 
-## 今後の展望
+## Future directions
 
-- 世界規模のデータ(国別の波情報・ブレイクの種類など)を追加できれば、当初想定していたグローバルなマップ分析に拡張可能。
-- 重症クラスのサンプルが少ないため、SMOTE等でクラス不均衡に対応するとモデル精度の改善が見込める。
+- Adding global-scale data (wave data and break type by country) could extend this into the originally-envisioned global map analysis.
+- The severe class has few samples; addressing the class imbalance with techniques like SMOTE could improve model accuracy.
