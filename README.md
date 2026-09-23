@@ -4,7 +4,7 @@
 
 ## 公開サイト
 
-(Streamlit Community Cloudにデプロイ後、ここにURLを記載)
+[https://surf-safety-dashboard.onrender.com](https://surf-safety-dashboard.onrender.com)(Render, 無料プラン。一定時間アクセスがないとスリープするため、初回表示に20〜30秒ほどかかることがあります)
 
 ## データソース
 
